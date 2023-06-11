@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title%}Home{% endblock %}
+{% load static %}
+{% load i18n %}
+{% block body%}
+    <div id="post-container">
+        {% for post in posts %}
+            {% include "includes/post.html" with post=post show_detail_link=True%}
+        {% endfor %}
+    </div>
+
+{% endblock %}
