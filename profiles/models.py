@@ -12,6 +12,7 @@ class Profile(models.Model):
         related_name= "profile"
     )
     image = ImageField(upload_to='profiles')
+    text = models.CharField (max_length = 240, default="Hello! :D")
 
     
     def __str__(self):
