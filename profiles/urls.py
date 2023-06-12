@@ -4,6 +4,7 @@ from . import views
 app_name="profiles"
 
 urlpatterns = [
+    path("settings/", views.AccountSettings.as_view(), name="account_settings"),
     path("<str:username>/", views.ProfileDetailView.as_view(), name="detail"),
-    path("<str:username>/follow/", views.FollowView.as_view(), name="follow")
+    path("<str:username>/follow/", views.FollowView.as_view(), name="follow"),
 ]

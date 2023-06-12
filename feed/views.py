@@ -1,4 +1,4 @@
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
@@ -69,3 +69,4 @@ class CreateNewPost(LoginRequiredMixin, CreateView ):
             },
             content_type="application/html"
         )
+    

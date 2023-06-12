@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load static %}
+
+{% block body %}
+<div>
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+      <div class="md:col-span-1">
+        <div class="px-4 sm:px-0">
+          <h3 class="text-lg font-medium leading-6 text-gray-900">Profile</h3>
+          <div class="rounded-3xl overflow-hidden shadow-xl max-w-xs my-3 bg-blue-500">
+            {#TODO Add background photo #}
+            <img src="https://i.imgur.com/dYcYQ7E.png" class="w-full" />
+            <div class="flex justify-center -mt-8">
+                  {% thumbnail user.profile.image "100x100" crop="center" as im %} 
+                          <img src="{{im.url}}" class="rounded-full border-solid border-white border-2 -mt-3 js-profileImage">
+                          <img src="" style = "width: 100px;" class="rounded-full border-solid border-white border-2 -mt-3 hidden js-profileNewImage">
+                  {% endthumbnail %}		
+            </div>
+            
+            <div class="text-center px-3 pb-6 pt-2">
+                <h3 class="text-white text-sm bold font-sans js-profileUsername">{{ user.username}}</h3>
+                <p class="mt-2 font-sans font-light text-white js-profileText">{{ user.profile.text }}</p>
+            </div>
+            
+            <div class="flex justify-center pb-3 text-white">
+            <div class="text-center mr-3 border-r pr-3">
+              <h2>{{total_posts}} </h2>
+              <span>Posts</span>
+            </div>
+            <div class="text-center">
+              <h2 class="js-followersNumber">{{total_followers}}</h2>
+              <span>Followers</span>
+            </div>
+            </div>
+        </div>
+        </div>
+      </div>
+      <div class="mt-5 md:mt-0 md:col-span-2">
+        <form  method="POST">
+          {% csrf_token %}
+          <div class="shadow sm:rounded-md sm:overflow-hidden">
+            <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">
+                  Username
+                </label>
+              <div class="mt-1">
+                  <textarea id="user_username" name="user_username" maxlength="240" rows="1" style="resize: none" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Username">{{user.username}}</textarea>
+              </div>
+                <label class="block text-sm font-medium text-gray-700">
+                    Bio
+                </label>
+                <div class="mt-1">
+                  <textarea id="user_text" name="user_text" maxlength="240" rows="3" style="resize: none" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="you@example.com">{{user.profile.text}}</textarea>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">
+                  Photo
+                </label>
+                <div class="mt-1 flex items-center">
+                  {% thumbnail user.profile.image "100x100" crop="center" as im %} 
+                    <img id="profileImagePreview" src="{{im.url}}" class="rounded-full border-solid border-white border-2 js-profileImagePreview">
+                  {% endthumbnail %}
+                    <img id="profileNewImagePreview" src="" class="rounded-full border-solid border-white border-2 hidden js-profileNewImagePreview">
+                  <input type="file" id="user_image" name="user_image" onchange="previewImage(event)"  class = "js-profileSource">
+                  
+                </div>
+              </div>
+  
+            <div class="px-4 py-3 text-right sm:px-6">
+              <button type="button" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 js-restart">
+                Restart
+              </button>
+              <button type="button" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 js-try">
+                Try
+              </button>
+              <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Save
+              </button>
+              
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="{% static 'js/settings.js' %}"></script>
+  {% endblock %}
+

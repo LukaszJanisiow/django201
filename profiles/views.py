@@ -1,11 +1,12 @@
-from typing import Any, Dict
-from django import http
 from django.contrib.auth.models import User
 from django.views.generic import DetailView,View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseBadRequest
 from feed.models import Post
 from followers.models import Follower
+from django.shortcuts import render, redirect
+from sorl.thumbnail import get_thumbnail
+
 
 class ProfileDetailView(DetailView):
     http_method_names=["get"]
@@ -64,3 +65,25 @@ class FollowView(LoginRequiredMixin,View):
             'success': True,
             'wording': "Unfollow" if data['action'] == "Follow" else "Follow"
         })
+    
+class AccountSettings(DetailView):
+    model = User
+    def get_context_data(self,**kwargs):
+        user = self.request.user
+        context={}
+        context['total_posts'] = Post.objects.filter(author=user).count()
+        context['total_followers']=Follower.objects.filter(following=user).count()
+        return context
+    
+    def get(self, request):
+        context = self.get_context_data()
+        return render(request, "profiles/settings.html", context)
+    
+    def post(self,request):
+        user=request.user
+        user.username = request.POST.get('user_username')
+        user.profile.text = request.POST.get('user_text')
+        user.save()
+        user.profile.save()
+        return redirect('/profile/settings/')
+    
