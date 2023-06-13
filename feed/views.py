@@ -20,6 +20,7 @@ class HomePage(TemplateView):
         context = super().get_context_data(*args, **kwargs)
         if self.request.user.is_authenticated:
             following = list(Follower.objects.filter(followed_by=self.request.user).values_list('following', flat = True))
+            following.append(self.request.user)
             print (following)
             if not following:
                 context['posts'] = Post.objects.all().order_by('-id')[0:30]
