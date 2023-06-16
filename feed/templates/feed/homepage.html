@@ -4,10 +4,25 @@
 {% load static %}
 {% load i18n %}
 {% block body%}
+    <!-- component -->
+    <div class='flex justify-center'>
+        <ul class="mx-auto grid max-w-full w-full grid-cols-2 gap-x-5 px-8 ">
+        <li class="">
+            <input class="peer sr-only" type="radio" value="yes" name="answer" id="yes" checked />
+            <label class="flex justify-center cursor-pointer rounded-full border border-gray-300 bg-white py-2 px-4 hover:bg-gray-50 focus:outline-none peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-indigo-500 transition-all duration-500 ease-in-out js-followed" for="yes">Followed</label>
+        </li>
+        <li class="">
+            <input class="peer sr-only" type="radio" value="no" name="answer" id="no" />
+            <label class="flex justify-center cursor-pointer rounded-full border border-gray-300 bg-white py-2 px-4 hover:bg-gray-50 focus:outline-none peer-checked:border-transparent peer-checked:ring-2 peer-checked:ring-indigo-500 transition-all duration-500 ease-in-out js-world" for="no">World</label>
+        </li>
+        </ul>
+    </div>
     <div id="post-container">
         {% for post in posts %}
             {% include "includes/post.html" with post=post show_detail_link=True%}
         {% endfor %}
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'js/homePage.js' %}"></script>
 {% endblock %}
+
