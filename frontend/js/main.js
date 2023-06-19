@@ -41,7 +41,6 @@ $(document).on("click",".js-submit", function(e) {
     if(!text.length){
         return false
     }
-
     $btn.prop("disabled", true).text("Posting!")
     $.ajax({
         type: 'POST',

@@ -1,7 +1,8 @@
 from django.views.generic import TemplateView, DetailView, View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from django.http import HttpResponse
 
 
 
@@ -9,7 +10,6 @@ from .models import Post
 from followers.models import Follower
 
 class HomePage(TemplateView):
-    http_method_names=["get"]
     template_name = "feed/homepage.html"
 
     def dispatch(self, request, *args, **kwargs):
@@ -19,17 +19,30 @@ class HomePage(TemplateView):
     def get_context_data(self,*args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         if self.request.user.is_authenticated:
-            following = list(Follower.objects.filter(followed_by=self.request.user).values_list('following', flat = True))
-            following.append(self.request.user)
-            print (following)
-            if not following:
-                context['posts'] = Post.objects.all().order_by('-id')[0:30]
-            else:
+            user=self.request.user
+            context['followed_World'] = user.profile.followed_World
+            if user.profile.followed_World:
+                following = list(Follower.objects.filter(followed_by=self.request.user).values_list('following', flat = True))
+                following.append(self.request.user)
                 context['posts'] = Post.objects.filter(author__in=following).order_by('-id')[0:60]
+            else:
+                 context['posts'] = Post.objects.all().order_by('-id')[0:30]
         else:
             context['posts'] = Post.objects.all().order_by('-id')[0:30]
         return context
     
+    def post(self, request):
+        # Handle the form submission logic here
+        user=request.user
+        if request.POST['answer'] == "followed":
+            user.profile.followed_World = True
+        elif request.POST['answer'] == "world":
+            user.profile.followed_World = False
+        user.save()
+        user.profile.save()
+        return redirect('/')
+
+        
     
 
 class PostDetailView(DetailView):

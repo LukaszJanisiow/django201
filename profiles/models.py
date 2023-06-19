@@ -13,6 +13,7 @@ class Profile(models.Model):
     )
     image = ImageField(upload_to='profiles')
     text = models.CharField (max_length = 240, default="Hello! :D")
+    followed_World = models.BooleanField(default=False)
 
     
     def __str__(self):
