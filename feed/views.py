@@ -2,7 +2,7 @@ from django.views.generic import TemplateView, DetailView, View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.core.paginator import Paginator
 
 
 
@@ -24,11 +24,14 @@ class HomePage(TemplateView):
             if user.profile.followed_World:
                 following = list(Follower.objects.filter(followed_by=self.request.user).values_list('following', flat = True))
                 following.append(self.request.user)
-                context['posts'] = Post.objects.filter(author__in=following).order_by('-id')[0:60]
+                p = Paginator(Post.objects.filter(author__in=following).order_by('-id'), 5)
             else:
-                 context['posts'] = Post.objects.all().order_by('-id')[0:30]
+                 p = Paginator(Post.objects.all().order_by('-id'), 5)
         else:
-            context['posts'] = Post.objects.all().order_by('-id')[0:30]
+            p = Paginator(Post.objects.all().order_by('-id'), 5)
+        page_number = self.request.GET.get('page')
+        page_obj = p.get_page(page_number)
+        context['posts'] = page_obj
         return context
     
     def post(self, request):

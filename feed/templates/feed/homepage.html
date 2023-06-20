@@ -23,9 +23,16 @@
     </form>
     <div id="post-container">
         {% for post in posts %}
+            <div class="post">
             {% include "includes/post.html" with post=post show_detail_link=True%}
+            </div>
         {% endfor %}
     </div>
+    <br>
+
+    {% if posts.has_next %}
+    <a class="load-more" href="?page={{ posts.next_page_number }}">Loading...</a>
+    {% endif %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{% static 'js/homePage.js' %}"></script>
 {% endblock %}

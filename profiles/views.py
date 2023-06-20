@@ -5,7 +5,7 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from feed.models import Post
 from followers.models import Follower
 from django.shortcuts import render, redirect
-from sorl.thumbnail import get_thumbnail
+
 
 
 class ProfileDetailView(DetailView):
