@@ -1,56 +1,68 @@
 {% extends "base.html" %}
 {% load thumbnail %}
-
+{% load static %}
 {% block title%}{{user.username}}{% endblock %}
 
 {% block body %}
-<div class="rounded-3xl overflow-hidden shadow-xl max-w-xs my-3 bg-blue-500">
-    {#TODO Add background photo #}
-    <img src="https://i.imgur.com/dYcYQ7E.png" class="w-full" />
-  <div class="flex justify-center -mt-8">
-        {% thumbnail user.profile.image "100x100" crop="center" as im %} 
-                <img src="{{im.url}}" class="rounded-full border-solid border-white border-2 -mt-3">
-        {% endthumbnail %}		
-  </div>
-    
-    <div class="text-center px-3 pb-6 pt-2">
-        <h3 class="text-white text-sm bold font-sans">{{ user.username}}</h3>
-        <p class="mt-2 font-sans font-light text-white">{{ user.profile.text }}</p>
-        {% if request.user.is_authenticated %}
-            {% if request.user != user %}
-                <button class="bg-white text-gray-800 font-bold rounded border-b-2 border-green-500 hover:border-green-600 hover:bg-green-500 hover:text-white shadow-md py-2 px-6 inline-flex items-center mt-4 js-follow" data-username="{{ user.username }}" data-action="{% if you_follow %}Unfollow{% else %}Follow{%endif%}" data-url= "{% url 'profiles:follow' user.username %}" type="button">
-                    <span class="mr-2 js-follow-text">
-                    {% if you_follow %}
-                        Unfollow
-                    {% else %}
-                        Follow
-                    {% endif %}     
-                    
-                    </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="currentcolor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-                    </svg>
-                </button>
+    <div class="rounded-3xl overflow-hidden shadow-xl max-w-xs my-3 bg-blue-500">
+        {#TODO Add background photo #}
+        <img src="https://i.imgur.com/dYcYQ7E.png" class="w-full" />
+    <div class="flex justify-center -mt-8">
+            {% thumbnail user.profile.image "100x100" crop="center" as im %} 
+                    <img src="{{im.url}}" class="rounded-full border-solid border-white border-2 -mt-3">
+            {% endthumbnail %}		
+    </div>
+        
+        <div class="text-center px-3 pb-6 pt-2">
+            <h3 class="text-white text-sm bold font-sans">{{ user.username}}</h3>
+            <p class="mt-2 font-sans font-light text-white">{{ user.profile.text }}</p>
+            {% if request.user.is_authenticated %}
+                {% if request.user != user %}
+                    <button class="bg-white text-gray-800 font-bold rounded border-b-2 border-green-500 hover:border-green-600 hover:bg-green-500 hover:text-white shadow-md py-2 px-6 inline-flex items-center mt-4 js-follow" data-username="{{ user.username }}" data-action="{% if you_follow %}Unfollow{% else %}Follow{%endif%}" data-url= "{% url 'profiles:follow' user.username %}" type="button">
+                        <span class="mr-2 js-follow-text">
+                        {% if you_follow %}
+                            Unfollow
+                        {% else %}
+                            Follow
+                        {% endif %}     
+                        
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentcolor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                        </svg>
+                    </button>
+                {% endif %}
+            {% else %}
+            <button class="bg-white text-gray-800 font-bold rounded border-b-2 border-green-500 shadow-md py-2 px-6 inline-flex items-center mt-4 js-follow" disabled="True" title="Login to follow" data-username=" {{ user.username }} " type="button">
+                <span class="mr-2 js-follow-text">Follow </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="currentcolor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                </svg>
+            </button>
             {% endif %}
-        {% else %}
-        <button class="bg-white text-gray-800 font-bold rounded border-b-2 border-green-500 shadow-md py-2 px-6 inline-flex items-center mt-4 js-follow" disabled="True" title="Login to follow" data-username=" {{ user.username }} " type="button">
-            <span class="mr-2 js-follow-text">Follow </span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path fill="currentcolor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-            </svg>
-        </button>
-        {% endif %}
+        </div>
+        
+        <div class="flex justify-center pb-3 text-white">
+        <div class="text-center mr-3 border-r pr-3">
+        <h2>{{total_posts}} </h2>
+        <span>Posts</span>
+        </div>
+        <div class="text-center">
+        <h2 class="js-followersNumber">{{total_followers}}</h2>
+        <span>Followers</span>
+        </div>
+        </div>
     </div>
-    
-    <div class="flex justify-center pb-3 text-white">
-    <div class="text-center mr-3 border-r pr-3">
-      <h2>{{total_posts}} </h2>
-      <span>Posts</span>
+    <div id="post-container">
+        {% for post in posts %}
+            <div class="post">
+            {% include "includes/post.html" with post=post show_detail_link=True%}
+            </div>
+        {% endfor %}
     </div>
-    <div class="text-center">
-      <h2 class="js-followersNumber">{{total_followers}}</h2>
-      <span>Followers</span>
-    </div>
-    </div>
-</div>
+    {% if posts.has_next %}
+        <a class="load-more" href="?page={{ posts.next_page_number }}">Loading...</a>
+    {% endif %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'js/detailProfile.js' %}"></script>
 {% endblock %}

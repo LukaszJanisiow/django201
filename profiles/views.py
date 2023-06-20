@@ -5,6 +5,7 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from feed.models import Post
 from followers.models import Follower
 from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
 
 
 
@@ -27,6 +28,10 @@ class ProfileDetailView(DetailView):
         context['total_followers']=Follower.objects.filter(following=user).count()
         if self.request.user.is_authenticated:
             context['you_follow'] = Follower.objects.filter(following=user, followed_by = self.request.user).exists()
+        p = Paginator(Post.objects.filter(author=user).order_by('-id'), 5)
+        page_number = self.request.GET.get('page')
+        page_obj = p.get_page(page_number)
+        context['posts'] = page_obj
         return context
     
 class FollowView(LoginRequiredMixin,View):
